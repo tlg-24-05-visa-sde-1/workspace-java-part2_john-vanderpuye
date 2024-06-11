@@ -1,6 +1,8 @@
 package com.javatunes.personnel;
 
 import static org.junit.Assert.*;
+
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -51,24 +53,52 @@ public class EmployeeFactoryTest {
      * assertEquals(SalariedEmployee.class, emp.getClass())
      */
     @Test
-    public void testCreateEmployeeSalaried() {
-        // TODO
+    public void testCreateEmployee_shouldReturnSalariedEmployee_whenTypeSE() {
+        Employee emp = EmployeeFactory.createEmployee(seMap);
+
+//        //verify that 'emp' really is a reference to a SalariedEmployee object
+//        // instanceof
+//        assertTrue(emp instanceof SalariedEmployee);         // IS-A match
+
+        // Class object
+        assertEquals(SalariedEmployee.class,emp.getClass());    // EXACT type match
+        // verify that all the properties have indeed been set
+        verifyNameandHireDate(emp);
+
+        // downcast 'emp' to more specific reference type Salaried employee
+        // this is because we need to call SalariedEmployee-specific method getSalary()
+        SalariedEmployee semp = (SalariedEmployee) emp;
+        assertEquals(50_000.0, semp.getSalary(), .001);
+
+
+    }
+
+    private static void verifyNameandHireDate(Employee emp) {
+        assertEquals("Jackie", emp.getName());
+        assertEquals(Date.valueOf("1990-08-24"), emp.getHireDate());
     }
 
     /**
      * TASK: verify that passing heMap into your factory returns a HourlyEmployee, with all properties set.
      */
     @Test
-    public void testCreateEmployeeHourly() {
-        // TODO
+    public void createEmployee_shouldReturnHourlyEmployee_whenTypeHE() {
+        Employee emp = EmployeeFactory.createEmployee(heMap);
+        // verify that 'emp' is a reference to an HourlyEmployee object
+        assertEquals(HourlyEmployee.class,emp.getClass());
+        verifyNameandHireDate(emp);
+        HourlyEmployee hemp = (HourlyEmployee) emp;
+        assertEquals(50.0, hemp.getRate(), .001);
+        assertEquals(40.0, hemp.getHours(), .001);
     }
 
     /**
      * TASK: verify that passing a map with an invalid "type" value results in IllegalArgumentException.
      * The only valid values for "type" are "HE" or "SE".
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testCreateEmployeeInvalidTypeThrowsIllegalArgumentException() {
-        // TODO
+        seMap.put("type","INVALID_TYPE");
+        EmployeeFactory.createEmployee(seMap);
     }
 }
