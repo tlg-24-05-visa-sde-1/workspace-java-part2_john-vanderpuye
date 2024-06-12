@@ -13,8 +13,20 @@ public class EmployeeTest {
     private Employee emp2;
     @Before
     public void setUp() {
-        emp1 = new SalariedEmployee("John", Date.valueOf("2000-01-01"));
-        emp2 = new SalariedEmployee("John", Date.valueOf("2000-01-01"));
+        // create two isntances of your named inner class
+        // emp1 = new DummyEmployee("John", Date.valueOf("2000-01-01"));
+        // emp2 = new DummyEmployee("John", Date.valueOf("2000-01-01"));
+
+        // create instances of an anonymous class instead
+        emp1 = getEmployee();
+        emp2 = getEmployee();
+    }
+
+    private static Employee getEmployee() {
+        return new Employee("John", Date.valueOf("2000-01-01")) {
+            public double pay() { return 0; }
+            public double payTaxes() { return 0; }
+        };
     }
 
 
@@ -37,5 +49,25 @@ public class EmployeeTest {
     public void equals_shouldReturnTrue_allPropertiesSame() {
         assertEquals(emp1, emp2); // this does an .equals() check
 
+    }
+
+    // NAMED MEMBER_LEVEL INNER CLASSES
+    private class DummyEmployee extends Employee {
+        public DummyEmployee() {
+        }
+
+        public DummyEmployee(String name, Date hireDate) {
+            super(name, hireDate);
+        }
+
+        @Override
+        public double pay() {
+            return 0;
+        }
+
+        @Override
+        public double payTaxes() {
+            return 0;
+        }
     }
 }
